@@ -870,6 +870,11 @@ document.addEventListener('click', function(e) {
 // ═══════════════════════════════════════════════════════════════
 
 function toggleZainChat() {
+  // Block free users from using Zain
+  if (!isPro()) {
+    openUpgradeModal();
+    return;
+  }
   const box = document.getElementById('zain-chatbox');
   box.classList.toggle('hidden');
 }
@@ -936,7 +941,82 @@ function escapeHtml(t) {
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+function fuzzyFix(q) {
+  // Common misspellings and shorthand → correct terms
+  const fixes = {
+    // RSI
+    'ris': 'rsi', 'rsi indicator': 'rsi', 'relative strength': 'rsi',
+    'rsi index': 'rsi', 'r.s.i': 'rsi', 'rsl': 'rsi', 'rai': 'rsi',
+    // SMA
+    'sma10': 'sma', 'sma30': 'sma', 'sma 10': 'sma', 'sma 30': 'sma',
+    'moving avg': 'moving average', 'movng average': 'moving average',
+    'moving avarage': 'moving average', 'ma': 'moving average',
+    // Golden/Death cross
+    'golden cros': 'golden cross', 'gold cross': 'golden cross',
+    'goldan cross': 'golden cross', 'goden cross': 'golden cross',
+    'death cros': 'death cross', 'deth cross': 'death cross',
+    // Buy/Sell
+    'wen to buy': 'when buy', 'when to by': 'when buy',
+    'wen should i buy': 'when buy', 'shoud i buy': 'should i buy',
+    'shoudl i buy': 'should i buy', 'when do i buy': 'when buy',
+    'wen to sell': 'when sell', 'when to sel': 'when sell',
+    'shoud i sell': 'should i sell', 'shoudl i sell': 'should i sell',
+    // Stocks
+    'stok': 'stock', 'stonk': 'stock', 'stonks': 'stock',
+    'stocks': 'stock', 'wat is a stock': 'stock what',
+    'whats a stock': 'stock what', 'what is stock': 'stock what',
+    // Crypto
+    'crypo': 'crypto', 'crytpo': 'crypto', 'cyrpto': 'crypto',
+    'crypro': 'crypto', 'bitcon': 'bitcoin', 'bitcoins': 'bitcoin',
+    'etherium': 'ethereum', 'etherum': 'ethereum', 'eth': 'ethereum',
+    'btc': 'bitcoin',
+    // Gold
+    'gol': 'gold', 'glod': 'gold',
+    // Oil
+    'oild': 'oil', 'oill': 'oil', 'crude': 'oil', 'petroleum': 'oil',
+    // Stop loss
+    'stop los': 'stop loss', 'stoploss': 'stop loss', 'stop-loss': 'stop loss',
+    'stopp loss': 'stop loss', 'stop lss': 'stop loss',
+    // Risk
+    'rsk management': 'risk', 'risk managment': 'risk',
+    'risk managemnt': 'risk', 'diversify': 'risk',
+    'diversification': 'risk',
+    // ETF
+    'etfs': 'etf', 'ef': 'etf', 'eft': 'etf',
+    // General typos
+    'wat': 'what', 'wut': 'what', 'waht': 'what',
+    'wen': 'when', 'whne': 'when',
+    'hw': 'how', 'hwo': 'how',
+    'shoud': 'should', 'shoudl': 'should',
+    'explan': 'explain', 'expain': 'explain', 'explian': 'explain',
+    'pls': 'please', 'plz': 'please',
+    'dont': "don't", 'doesnt': "doesn't", 'cant': "can't",
+    'idk': "i don't know", 'idc': "i don't care",
+    'tbh': 'honestly', 'ngl': 'honestly',
+    'prfit': 'profit', 'proffit': 'profit', 'proffits': 'profit',
+    'los': 'loss', 'losss': 'loss', 'losses': 'loss',
+    'mony': 'money', 'monee': 'money', 'muney': 'money',
+    'begginer': 'beginner', 'beginer': 'beginner', 'newbie': 'beginner',
+    'noob': 'beginner',
+    'market nest': 'marketnest',
+    'thnks': 'thanks', 'thx': 'thanks', 'ty': 'thanks',
+  };
+
+  // Apply fixes
+  let fixed = q;
+  for (const [typo, correct] of Object.entries(fixes)) {
+    if (fixed.includes(typo)) {
+      fixed = fixed.replace(typo, correct);
+    }
+  }
+
+  return fixed;
+}
+
 function zainThink(q) {
+  // ─── Fuzzy matching layer — understand typos and mistakes ───────
+  q = fuzzyFix(q);
+
   // RSI questions
   if (q.includes('rsi')) {
     if (q.includes('what') || q.includes('explain') || q.includes('mean'))
@@ -1029,6 +1109,16 @@ function zainThink(q) {
     return `Hey! What's up? Ask me anything about stocks, crypto, gold, oil, signals, or trading strategy. I'm here to help you make smarter moves.`;
   }
 
-  // Default / catch-all
-  return `Hmm I'm not 100% sure what you mean, but here's what I can help with:<br><br>• "What is RSI?" — understand buy/sell signals<br>• "When should I buy?" — entry timing<br>• "When should I sell?" — taking profits<br>• "What is a stop-loss?" — protecting your money<br>• "Tell me about oil" or "crypto" or "gold"<br>• "What is an ETF?"<br>• "I'm new to this"<br><br>Just ask me in plain English and I'll break it down for you. No question is too basic.`;
+  // Default / catch-all — try to guess what they mean
+  // Check for partial matches to suggest corrections
+  if (q.includes('buy') || q.includes('purchase') || q.includes('get'))
+    return `It sounds like you're asking about buying. Do you mean "when should I buy a stock?" or are you asking about a specific ticker? Just let me know and I'll help you out.`;
+  if (q.includes('sell') || q.includes('exit') || q.includes('get out'))
+    return `Sounds like you're asking about selling. Do you mean "when should I sell?" or do you want to know about stop-losses and taking profits? I got you either way.`;
+  if (q.includes('money') || q.includes('cash') || q.includes('invest'))
+    return `Are you asking about how much money to invest per trade? Or how to manage your risk? If so, just ask me about "risk management" and I'll break it down for you.`;
+  if (q.includes('how') || q.includes('what') || q.includes('why'))
+    return `I think I know what you're getting at but I want to make sure I give you the right answer. Could you rephrase that a bit? For example you can ask me:<br><br>• "What is RSI?"<br>• "How do I know when to buy?"<br>• "Why did my stock go down?"<br><br>I'll do my best to help no matter how you ask it.`;
+
+  return `I'm not totally sure what you're asking but no worries — I'm here to help. Try asking me something like:<br><br>• "What is RSI?"<br>• "When should I buy?"<br>• "When should I sell?"<br>• "What is a stop-loss?"<br>• "Tell me about crypto" or "oil" or "gold"<br>• "I'm new to this"<br><br>You can type however you want — I'll figure it out. And if I don't get it, just rephrase and I'll try again. No judgment here.`;
 }

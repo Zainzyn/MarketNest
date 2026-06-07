@@ -1018,3 +1018,39 @@ body {
   0%,60%,100% { transform: translateY(0); opacity: 0.4; }
   30% { transform: translateY(-6px); opacity: 1; }
 }
+
+
+/* Cancel note on pricing */
+.cancel-note {
+  text-align: center; font-size: 13px; color: var(--green);
+  margin-bottom: 16px; font-weight: 600;
+}
+
+/* Zain AI Promo Section */
+.zain-promo-section {
+  max-width: 1000px; margin: 0 auto; padding: 40px 40px 80px;
+}
+.zain-promo {
+  display: flex; align-items: center; gap: 32px; padding: 36px;
+  border: 1px solid rgba(0,212,161,0.2); flex-wrap: wrap;
+}
+.zp-left { display: flex; align-items: flex-start; gap: 20px; flex: 1; min-width: 300px; }
+.zp-avatar { font-size: 48px; flex-shrink: 0; }
+.zp-info h3 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+.zp-info p { font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 14px; }
+.zp-examples { display: flex; flex-wrap: wrap; gap: 8px; }
+.zp-chip {
+  padding: 6px 12px; background: rgba(0,212,161,0.08);
+  border: 1px solid rgba(0,212,161,0.2); border-radius: 20px;
+  font-size: 12px; color: var(--green); font-weight: 500;
+}
+.zp-right { display: flex; align-items: center; }
+.zp-pro-lock {
+  text-align: center; padding: 24px 28px;
+  background: rgba(245,166,35,0.06); border: 1px solid rgba(245,166,35,0.2);
+  border-radius: var(--radius); display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+}
+.zp-lock-icon { font-size: 32px; }
+.zp-pro-lock strong { font-size: 16px; color: var(--gold); }
+.zp-pro-lock p { font-size: 13px; color: var(--text-mid); }
