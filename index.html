@@ -179,6 +179,7 @@
     <div class="market-tabs">
       <button class="market-tab active" id="mtab-stocks" onclick="switchTab('stocks')">📈 Stocks</button>
       <button class="market-tab locked" id="mtab-gold" onclick="switchTab('gold')">🏅 Gold <span class="pro-lock-pill">PRO</span></button>
+      <button class="market-tab locked" id="mtab-oil" onclick="switchTab('oil')">🛢️ Oil <span class="pro-lock-pill">PRO</span></button>
       <button class="market-tab locked" id="mtab-crypto" onclick="switchTab('crypto')">₿ Crypto <span class="pro-lock-pill">PRO</span></button>
     </div>
     <div class="pro-banner hidden" id="pro-banner">
@@ -497,6 +498,34 @@
   </footer>
 
 </div><!-- /main-app -->
+
+<!-- ZAIN AI CHATBOT -->
+<div class="zain-chat-btn" id="zain-btn" onclick="toggleZainChat()">
+  <span class="zain-btn-icon">🤖</span>
+  <span class="zain-btn-label">Ask Zain</span>
+</div>
+<div class="zain-chatbox glass-card hidden" id="zain-chatbox">
+  <div class="zain-header">
+    <div class="zain-header-left">
+      <span class="zain-avatar">🤖</span>
+      <div>
+        <div class="zain-name">Zain</div>
+        <div class="zain-status">AI Stock Advisor • Online</div>
+      </div>
+    </div>
+    <button class="zain-close" onclick="toggleZainChat()">✕</button>
+  </div>
+  <div class="zain-messages" id="zain-messages">
+    <div class="zain-msg bot">
+      <span class="zain-msg-avatar">🤖</span>
+      <div class="zain-msg-bubble">Hey! I'm <strong>Zain</strong>, your AI stock advisor. Ask me anything about stocks, crypto, gold, oil, trading strategies, or market terms. I'm here to help you learn!</div>
+    </div>
+  </div>
+  <div class="zain-input-row">
+    <input type="text" id="zain-input" placeholder="Ask me about stocks, crypto, signals..." onkeydown="if(event.key==='Enter')sendZainMsg()"/>
+    <button class="zain-send-btn" onclick="sendZainMsg()">→</button>
+  </div>
+</div>
 
 <!-- UPGRADE MODAL -->
 <div class="modal-overlay hidden" id="upgrade-modal" onclick="handleModalOverlayClick(event)">

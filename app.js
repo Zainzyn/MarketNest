@@ -20,6 +20,13 @@ const WATCHLISTS = {
     { sym: 'GOLD', name: 'Barrick Gold Corp.' },
     { sym: 'NEM',  name: 'Newmont Corporation' },
   ],
+  oil: [
+    { sym: 'USO',  name: 'United States Oil Fund' },
+    { sym: 'XLE',  name: 'Energy Select Sector ETF' },
+    { sym: 'OXY',  name: 'Occidental Petroleum' },
+    { sym: 'XOM',  name: 'Exxon Mobil Corp.' },
+    { sym: 'CVX',  name: 'Chevron Corp.' },
+  ],
   crypto: [
     { sym: 'BTC-USD',  name: 'Bitcoin' },
     { sym: 'ETH-USD',  name: 'Ethereum' },
@@ -856,3 +863,130 @@ document.addEventListener('click', function(e) {
   // Auth screen is shown by default (main-app is hidden)
   renderMoodMeter();
 })();
+
+
+// ═══════════════════════════════════════════════════════════════
+// ZAIN AI CHATBOT
+// ═══════════════════════════════════════════════════════════════
+
+function toggleZainChat() {
+  const box = document.getElementById('zain-chatbox');
+  box.classList.toggle('hidden');
+}
+
+function sendZainMsg() {
+  const input = document.getElementById('zain-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  const container = document.getElementById('zain-messages');
+
+  // Add user message
+  container.innerHTML += `<div class="zain-msg user">
+    <span class="zain-msg-avatar">👤</span>
+    <div class="zain-msg-bubble">${escapeHtml(text)}</div>
+  </div>`;
+
+  // Generate AI response
+  const response = zainThink(text.toLowerCase());
+
+  // Add bot response with slight delay for realism
+  setTimeout(() => {
+    container.innerHTML += `<div class="zain-msg bot">
+      <span class="zain-msg-avatar">🤖</span>
+      <div class="zain-msg-bubble">${response}</div>
+    </div>`;
+    container.scrollTop = container.scrollHeight;
+  }, 600);
+
+  container.scrollTop = container.scrollHeight;
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function zainThink(q) {
+  // RSI questions
+  if (q.includes('rsi')) {
+    if (q.includes('what') || q.includes('explain') || q.includes('mean'))
+      return `<strong>RSI (Relative Strength Index)</strong> measures how fast a price is moving on a scale of 0–100.<br><br>• <strong>Below 30</strong> = Oversold → The stock has been selling off hard and may bounce back. Possible buy zone.<br>• <strong>Above 70</strong> = Overbought → The stock has risen fast and may pull back. Possible sell zone.<br>• <strong>Around 50</strong> = Neutral, no strong signal.<br><br>RSI works best when combined with other indicators like SMA crossovers.`;
+    if (q.includes('buy') || q.includes('oversold'))
+      return `When RSI drops <strong>below 30</strong>, it means the stock is oversold — it may have been pushed down too far and could bounce. This is a potential buying opportunity, but always confirm with other signals (like SMA direction) before buying.`;
+    if (q.includes('sell') || q.includes('overbought'))
+      return `When RSI goes <strong>above 70</strong>, the stock is overbought — it's risen too fast and may pull back. This can be a signal to sell or tighten your stop-loss. But remember: strong stocks can stay overbought for a while in uptrends.`;
+  }
+
+  // SMA / Moving average questions
+  if (q.includes('sma') || q.includes('moving average') || q.includes('golden cross') || q.includes('death cross')) {
+    if (q.includes('golden'))
+      return `A <strong>Golden Cross</strong> happens when the short-term SMA (like SMA 10) crosses ABOVE the long-term SMA (like SMA 30). This signals bullish momentum — the stock is gaining strength. It's considered a BUY signal, but works best when RSI also confirms (not already overbought).`;
+    if (q.includes('death'))
+      return `A <strong>Death Cross</strong> happens when the short-term SMA crosses BELOW the long-term SMA. This signals bearish momentum — the stock is losing strength. It's a SELL signal. If you're holding, consider selling or setting a tight stop-loss.`;
+    return `<strong>SMA (Simple Moving Average)</strong> smooths out price noise by averaging the last N days.<br><br>• <strong>SMA 10</strong> = short-term trend (fast)<br>• <strong>SMA 30</strong> = medium-term trend (slow)<br><br>When SMA 10 crosses above SMA 30 = <strong>Golden Cross (bullish)</strong><br>When SMA 10 crosses below SMA 30 = <strong>Death Cross (bearish)</strong><br><br>These crossovers are one of the most reliable trend signals.`;
+  }
+
+  // Buy/when to buy
+  if ((q.includes('when') && q.includes('buy')) || q.includes('good time to buy') || q.includes('should i buy')) {
+    return `Good times to buy:<br><br>• RSI is below 30 (oversold)<br>• A Golden Cross just formed (SMA10 crossed above SMA30)<br>• The stock is above its SMA30 and trending up<br>• Multiple signals confirm each other<br><br>Avoid buying when RSI is above 70 or when the price is below both SMAs and falling. Patience beats FOMO — wait for strong setups.`;
+  }
+
+  // Sell/when to sell
+  if ((q.includes('when') && q.includes('sell')) || q.includes('should i sell') || q.includes('take profit')) {
+    return `Good times to sell:<br><br>• RSI is above 70 (overbought)<br>• A Death Cross forms<br>• Your take-profit target is hit (e.g. +5-10%)<br>• Your stop-loss triggers (e.g. -3-5%)<br>• The stock drops below SMA30<br><br>Never be greedy. It's better to take a smaller profit than watch it disappear. Set your targets before you enter a trade.`;
+  }
+
+  // Stocks
+  if (q.includes('stock') && (q.includes('what') || q.includes('explain'))) {
+    return `A <strong>stock</strong> is a tiny piece of ownership in a company. When you buy Apple stock, you literally own a fraction of Apple.<br><br>• If the company does well → stock price goes up → you can sell for profit<br>• If it does poorly → price drops → you lose money if you sell<br><br>You make money by <strong>buying low and selling high</strong>. The key is timing your entries and exits using signals like RSI and SMA.`;
+  }
+
+  // Oil
+  if (q.includes('oil') || q.includes('uso') || q.includes('xle') || q.includes('exxon') || q.includes('chevron') || q.includes('oxy')) {
+    return `<strong>Oil</strong> is a great trading opportunity because:<br><br>• It's heavily affected by global events (wars, OPEC decisions, demand)<br>• Very volatile → big price swings = more profit opportunities<br>• Tends to move opposite to tech stocks<br><br>Key oil tickers:<br>• <strong>USO</strong> — directly tracks oil price<br>• <strong>XLE</strong> — energy sector ETF<br>• <strong>XOM</strong> — Exxon Mobil<br>• <strong>CVX</strong> — Chevron<br>• <strong>OXY</strong> — Occidental Petroleum<br><br>Oil is a PRO feature on MarketNest. Use the same RSI and SMA signals — they work great on oil.`;
+  }
+
+  // Gold
+  if (q.includes('gold') || q.includes('gld')) {
+    return `<strong>Gold</strong> is a safe haven asset — it tends to go UP when the stock market goes DOWN.<br><br>Investors buy gold during:<br>• Economic uncertainty<br>• High inflation<br>• Market crashes<br><br>Key tickers: <strong>GLD</strong> (ETF tracking gold price), <strong>IAU</strong>, <strong>GOLD</strong> (Barrick mining).<br><br>Gold moves slower than stocks but is very reliable as a store of value over time.`;
+  }
+
+  // Crypto
+  if (q.includes('crypto') || q.includes('bitcoin') || q.includes('btc') || q.includes('ethereum') || q.includes('eth')) {
+    return `<strong>Crypto</strong> is extremely volatile — prices can swing 10-20% in a single day.<br><br>• <strong>Bitcoin (BTC)</strong> — digital gold, most established<br>• <strong>Ethereum (ETH)</strong> — smart contracts platform<br>• <strong>Solana (SOL)</strong> — fast transactions<br><br>Crypto trades <strong>24/7</strong> (no market hours) and RSI signals fire more often because of the volatility.<br><br>⚠️ Never invest more than you can afford to lose. Crypto is high risk, high reward.`;
+  }
+
+  // Stop loss
+  if (q.includes('stop loss') || q.includes('stop-loss') || q.includes('stoploss')) {
+    return `A <strong>stop-loss</strong> is a preset price where you automatically sell to limit your losses.<br><br>Example: You buy at $100, set stop-loss at $95 (-5%). If the price drops to $95, it sells automatically so you don't lose more.<br><br>Rules:<br>• Always set a stop-loss BEFORE entering a trade<br>• Common levels: 3%, 5%, or 7% below your buy price<br>• Never remove a stop-loss because of hope — discipline saves money`;
+  }
+
+  // Risk management
+  if (q.includes('risk') || q.includes('how much') || q.includes('diversif')) {
+    return `<strong>Risk management</strong> is the #1 thing that separates winners from losers in trading:<br><br>• Never risk more than <strong>2-5%</strong> of your total cash on one trade<br>• Always use a <strong>stop-loss</strong><br>• <strong>Diversify</strong> — spread across stocks, gold, oil, crypto<br>• Never invest money you can't afford to lose<br>• Don't chase losses with bigger bets<br><br>The goal isn't to win every trade — it's to make sure your winners are bigger than your losers.`;
+  }
+
+  // What is MarketNest
+  if (q.includes('marketnest') || q.includes('this app') || q.includes('this site')) {
+    return `<strong>MarketNest</strong> is a paper trading platform where you practice buying and selling stocks, gold, oil, and crypto with <strong>$10,000 in fake money</strong>.<br><br>Use it to learn timing, signals, and strategy without risking real cash. Once you're profitable here, you can apply those skills to real trading apps like Robinhood or Coinbase.`;
+  }
+
+  // Beginner / how to start
+  if (q.includes('beginner') || q.includes('start') || q.includes('new to') || q.includes('learn')) {
+    return `Welcome! Here's how to get started:<br><br>1. <strong>Learn the basics</strong> — check the Learn section on this site<br>2. <strong>Understand RSI and SMA</strong> — these are your main signals<br>3. <strong>Start with stocks</strong> — less volatile, easier to learn<br>4. <strong>Paper trade first</strong> — practice with fake money until profitable<br>5. <strong>Never skip risk management</strong> — use stop-losses always<br><br>Ask me anything specific and I'll explain it in detail!`;
+  }
+
+  // P&L / profit and loss
+  if (q.includes('p&l') || q.includes('profit') || q.includes('loss') || q.includes('p and l')) {
+    return `<strong>P&L (Profit and Loss)</strong> shows how much money you've made or lost.<br><br>• <strong>+$50</strong> means you gained $50 on that position<br>• <strong>-$20</strong> means you lost $20<br><br>Calculate it: (Current Price - Buy Price) × Number of Shares<br><br>In MarketNest, check your Portfolio section to see P&L on each position and your overall performance.`;
+  }
+
+  // ETF
+  if (q.includes('etf')) {
+    return `An <strong>ETF (Exchange-Traded Fund)</strong> is a basket of stocks bundled into one ticker.<br><br>Examples:<br>• <strong>SPY</strong> = top 500 US companies<br>• <strong>GLD</strong> = gold price<br>• <strong>XLE</strong> = energy/oil companies<br>• <strong>USO</strong> = oil price<br><br>ETFs are great for beginners because they give you diversification in one trade — less risk than buying a single stock.`;
+  }
+
+  // Default / catch-all
+  return `Good question! Here's what I can help you with:<br><br>• <strong>"What is RSI?"</strong> — Learn about signals<br>• <strong>"When should I buy?"</strong> — Entry timing<br>• <strong>"When should I sell?"</strong> — Exit strategies<br>• <strong>"What is a stop-loss?"</strong> — Risk management<br>• <strong>"Tell me about oil"</strong> — Oil trading<br>• <strong>"Tell me about crypto"</strong> — Crypto basics<br>• <strong>"What is an ETF?"</strong> — Fund investing<br>• <strong>"I'm a beginner"</strong> — Getting started guide<br><br>Ask me anything about stocks, trading, or market terms!`;
+}
