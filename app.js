@@ -887,20 +887,49 @@ function sendZainMsg() {
     <span class="zain-msg-avatar">👤</span>
     <div class="zain-msg-bubble">${escapeHtml(text)}</div>
   </div>`;
+  container.scrollTop = container.scrollHeight;
+
+  // Show typing indicator
+  const typingId = 'typing-' + Date.now();
+  container.innerHTML += `<div class="zain-msg bot" id="${typingId}">
+    <span class="zain-msg-avatar">🤖</span>
+    <div class="zain-msg-bubble zain-typing"><span></span><span></span><span></span></div>
+  </div>`;
+  container.scrollTop = container.scrollHeight;
 
   // Generate AI response
   const response = zainThink(text.toLowerCase());
 
-  // Add bot response with slight delay for realism
+  // Remove typing indicator and show real response with typewriter effect
+  const delay = 800 + Math.random() * 600;
   setTimeout(() => {
-    container.innerHTML += `<div class="zain-msg bot">
-      <span class="zain-msg-avatar">🤖</span>
-      <div class="zain-msg-bubble">${response}</div>
-    </div>`;
-    container.scrollTop = container.scrollHeight;
-  }, 600);
+    const typingEl = document.getElementById(typingId);
+    if (typingEl) typingEl.remove();
 
-  container.scrollTop = container.scrollHeight;
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'zain-msg bot';
+    msgDiv.innerHTML = `<span class="zain-msg-avatar">🤖</span><div class="zain-msg-bubble" id="zain-typewriter"></div>`;
+    container.appendChild(msgDiv);
+
+    typewriterEffect(response, document.getElementById('zain-typewriter'), container);
+  }, delay);
+}
+
+function typewriterEffect(html, el, container) {
+  // Split into chunks for smooth word-by-word reveal
+  const words = html.split(' ');
+  let i = 0;
+  el.innerHTML = '';
+  const interval = setInterval(() => {
+    if (i < words.length) {
+      el.innerHTML += (i === 0 ? '' : ' ') + words[i];
+      container.scrollTop = container.scrollHeight;
+      i++;
+    } else {
+      clearInterval(interval);
+      container.scrollTop = container.scrollHeight;
+    }
+  }, 40);
 }
 
 function escapeHtml(t) {
@@ -911,82 +940,95 @@ function zainThink(q) {
   // RSI questions
   if (q.includes('rsi')) {
     if (q.includes('what') || q.includes('explain') || q.includes('mean'))
-      return `<strong>RSI (Relative Strength Index)</strong> measures how fast a price is moving on a scale of 0–100.<br><br>• <strong>Below 30</strong> = Oversold → The stock has been selling off hard and may bounce back. Possible buy zone.<br>• <strong>Above 70</strong> = Overbought → The stock has risen fast and may pull back. Possible sell zone.<br>• <strong>Around 50</strong> = Neutral, no strong signal.<br><br>RSI works best when combined with other indicators like SMA crossovers.`;
+      return `Alright so RSI stands for Relative Strength Index. Think of it like a speedometer for a stock — it tells you how fast the price is moving on a scale from 0 to 100.<br><br>If it drops <strong>below 30</strong>, the stock has been beaten down hard and might bounce back — that's a potential buy zone. If it shoots <strong>above 70</strong>, it's been running too hot and might cool off — that's when you think about selling.<br><br>Around 50 is just neutral, nothing exciting happening.<br><br>Do you want me to explain it easier?`;
     if (q.includes('buy') || q.includes('oversold'))
-      return `When RSI drops <strong>below 30</strong>, it means the stock is oversold — it may have been pushed down too far and could bounce. This is a potential buying opportunity, but always confirm with other signals (like SMA direction) before buying.`;
+      return `So when RSI drops below 30, it basically means the stock got sold off way too hard — like people panicked. Usually that means it's about to bounce back up. That's your window to buy in at a discount.<br><br>But don't just blindly buy every time RSI is low — make sure other things confirm it too, like the price starting to trend up. Does that make sense?`;
     if (q.includes('sell') || q.includes('overbought'))
-      return `When RSI goes <strong>above 70</strong>, the stock is overbought — it's risen too fast and may pull back. This can be a signal to sell or tighten your stop-loss. But remember: strong stocks can stay overbought for a while in uptrends.`;
+      return `When RSI goes above 70, it means the stock has been on a crazy run and might be running out of steam. Think of it like a car redlining — it can't keep going that fast forever.<br><br>That's usually a signal to take your profits or at least set a tight stop-loss so you don't give back your gains. Make sense? Do you want me to explain it easier?`;
   }
 
   // SMA / Moving average questions
   if (q.includes('sma') || q.includes('moving average') || q.includes('golden cross') || q.includes('death cross')) {
     if (q.includes('golden'))
-      return `A <strong>Golden Cross</strong> happens when the short-term SMA (like SMA 10) crosses ABOVE the long-term SMA (like SMA 30). This signals bullish momentum — the stock is gaining strength. It's considered a BUY signal, but works best when RSI also confirms (not already overbought).`;
+      return `A Golden Cross is basically the market telling you "hey, momentum is shifting up." It happens when the short-term average (SMA 10) crosses above the long-term average (SMA 30).<br><br>Think of it like a fast car overtaking a slow one — the speed is picking up. It's one of the most reliable buy signals out there. Do you want me to explain it easier?`;
     if (q.includes('death'))
-      return `A <strong>Death Cross</strong> happens when the short-term SMA crosses BELOW the long-term SMA. This signals bearish momentum — the stock is losing strength. It's a SELL signal. If you're holding, consider selling or setting a tight stop-loss.`;
-    return `<strong>SMA (Simple Moving Average)</strong> smooths out price noise by averaging the last N days.<br><br>• <strong>SMA 10</strong> = short-term trend (fast)<br>• <strong>SMA 30</strong> = medium-term trend (slow)<br><br>When SMA 10 crosses above SMA 30 = <strong>Golden Cross (bullish)</strong><br>When SMA 10 crosses below SMA 30 = <strong>Death Cross (bearish)</strong><br><br>These crossovers are one of the most reliable trend signals.`;
+      return `A Death Cross sounds scary and honestly it kinda is. It's the opposite of a Golden Cross — the short-term average drops below the long-term one. Basically the stock is losing momentum and heading down.<br><br>When you see this, it's usually time to sell or at least set a tight stop-loss to protect yourself. Do you want me to explain it easier?`;
+    return `Okay so SMA stands for Simple Moving Average. It smooths out all the daily noise and shows you the actual trend.<br><br>Think of it like this — if you look at a stock's price every day it looks like crazy zigzags. But SMA averages the last few days so you can see "is this thing generally going up or down?"<br><br><strong>SMA 10</strong> = average of last 10 days (reacts fast)<br><strong>SMA 30</strong> = average of last 30 days (slower, more reliable)<br><br>When the fast one crosses above the slow one = <strong>Golden Cross = bullish</strong><br>When the fast one drops below = <strong>Death Cross = bearish</strong><br><br>Do you want me to explain it easier?`;
   }
 
   // Buy/when to buy
   if ((q.includes('when') && q.includes('buy')) || q.includes('good time to buy') || q.includes('should i buy')) {
-    return `Good times to buy:<br><br>• RSI is below 30 (oversold)<br>• A Golden Cross just formed (SMA10 crossed above SMA30)<br>• The stock is above its SMA30 and trending up<br>• Multiple signals confirm each other<br><br>Avoid buying when RSI is above 70 or when the price is below both SMAs and falling. Patience beats FOMO — wait for strong setups.`;
+    return `Great question. Here's what I look for before buying anything:<br><br>1. RSI is low (under 40) — the stock is on sale<br>2. The price is trending up or starting to turn around<br>3. SMA 10 is above SMA 30 or about to cross over it<br>4. I'm not putting more than 5% of my cash into one trade<br><br>The biggest mistake beginners make is buying because something "looks cool" or is trending on social media. Don't do that. Wait for the numbers to tell you it's time.<br><br>Do you want me to explain it easier?`;
   }
 
   // Sell/when to sell
   if ((q.includes('when') && q.includes('sell')) || q.includes('should i sell') || q.includes('take profit')) {
-    return `Good times to sell:<br><br>• RSI is above 70 (overbought)<br>• A Death Cross forms<br>• Your take-profit target is hit (e.g. +5-10%)<br>• Your stop-loss triggers (e.g. -3-5%)<br>• The stock drops below SMA30<br><br>Never be greedy. It's better to take a smaller profit than watch it disappear. Set your targets before you enter a trade.`;
+    return `Knowing when to sell is honestly harder than knowing when to buy. Here's my approach:<br><br>1. Hit your profit target? Sell. Don't get greedy waiting for more.<br>2. RSI above 70? The stock is running too hot — take profits<br>3. Your stop-loss triggers? Sell immediately, no questions asked<br>4. Death Cross forms? Momentum is dying, time to exit<br><br>The number one rule: decide BEFORE you buy when you'll sell. Write it down. Then stick to it no matter what.<br><br>Do you want me to explain it easier?`;
   }
 
   // Stocks
   if (q.includes('stock') && (q.includes('what') || q.includes('explain'))) {
-    return `A <strong>stock</strong> is a tiny piece of ownership in a company. When you buy Apple stock, you literally own a fraction of Apple.<br><br>• If the company does well → stock price goes up → you can sell for profit<br>• If it does poorly → price drops → you lose money if you sell<br><br>You make money by <strong>buying low and selling high</strong>. The key is timing your entries and exits using signals like RSI and SMA.`;
+    return `Okay so a stock is literally a tiny piece of a company. When you buy Apple stock, you own a fraction of Apple — like a slice of a really big pizza.<br><br>If Apple makes money and grows, your slice becomes worth more. If they mess up, it's worth less.<br><br>You make money by buying when the price is low and selling when it's higher. That's literally it. The hard part is knowing WHEN to buy and sell — that's what all the signals and indicators are for.<br><br>Do you want me to explain it easier?`;
   }
 
   // Oil
   if (q.includes('oil') || q.includes('uso') || q.includes('xle') || q.includes('exxon') || q.includes('chevron') || q.includes('oxy')) {
-    return `<strong>Oil</strong> is a great trading opportunity because:<br><br>• It's heavily affected by global events (wars, OPEC decisions, demand)<br>• Very volatile → big price swings = more profit opportunities<br>• Tends to move opposite to tech stocks<br><br>Key oil tickers:<br>• <strong>USO</strong> — directly tracks oil price<br>• <strong>XLE</strong> — energy sector ETF<br>• <strong>XOM</strong> — Exxon Mobil<br>• <strong>CVX</strong> — Chevron<br>• <strong>OXY</strong> — Occidental Petroleum<br><br>Oil is a PRO feature on MarketNest. Use the same RSI and SMA signals — they work great on oil.`;
+    return `Oil is one of my favorites honestly. It moves a LOT and is really reactive to world news — wars, OPEC meetings, supply cuts, all of that makes oil swing hard.<br><br>Here are the tickers you wanna watch:<br>• <strong>USO</strong> — tracks the actual oil price directly<br>• <strong>XLE</strong> — basket of all the big energy companies<br>• <strong>XOM</strong> — Exxon Mobil (biggest oil company)<br>• <strong>CVX</strong> — Chevron<br>• <strong>OXY</strong> — Occidental Petroleum<br><br>Same signals work great on oil — RSI, SMA crossovers, all of it. The swings are just bigger so you can make more per trade.<br><br>Do you want me to explain it easier?`;
   }
 
   // Gold
   if (q.includes('gold') || q.includes('gld')) {
-    return `<strong>Gold</strong> is a safe haven asset — it tends to go UP when the stock market goes DOWN.<br><br>Investors buy gold during:<br>• Economic uncertainty<br>• High inflation<br>• Market crashes<br><br>Key tickers: <strong>GLD</strong> (ETF tracking gold price), <strong>IAU</strong>, <strong>GOLD</strong> (Barrick mining).<br><br>Gold moves slower than stocks but is very reliable as a store of value over time.`;
+    return `Gold is like the safe room of investing. When everything else is crashing — stocks falling, crypto dumping — gold usually goes UP. It's where scared money hides.<br><br>People buy gold when:<br>• The economy looks shaky<br>• Inflation is high (your dollars are worth less so gold holds value)<br>• There's war or global uncertainty<br><br>It moves slower than stocks but it's extremely reliable over time. The ticker to watch is <strong>GLD</strong> — it tracks the actual gold price.<br><br>Do you want me to explain it easier?`;
   }
 
   // Crypto
   if (q.includes('crypto') || q.includes('bitcoin') || q.includes('btc') || q.includes('ethereum') || q.includes('eth')) {
-    return `<strong>Crypto</strong> is extremely volatile — prices can swing 10-20% in a single day.<br><br>• <strong>Bitcoin (BTC)</strong> — digital gold, most established<br>• <strong>Ethereum (ETH)</strong> — smart contracts platform<br>• <strong>Solana (SOL)</strong> — fast transactions<br><br>Crypto trades <strong>24/7</strong> (no market hours) and RSI signals fire more often because of the volatility.<br><br>⚠️ Never invest more than you can afford to lose. Crypto is high risk, high reward.`;
+    return `Crypto is the wild west of investing. Prices can move 10-20% in a single day — both up AND down. It's high risk, high reward.<br><br>The big ones:<br>• <strong>Bitcoin (BTC)</strong> — the original, like digital gold<br>• <strong>Ethereum (ETH)</strong> — powers most of the crypto ecosystem<br>• <strong>Solana (SOL)</strong> — super fast transactions<br><br>One advantage: crypto trades <strong>24/7</strong> — no market hours, no weekends off. So you can always trade it.<br><br>My honest advice: never put in more than you're okay completely losing. Crypto can make you rich or wreck you. Respect it.<br><br>Do you want me to explain it easier?`;
   }
 
   // Stop loss
   if (q.includes('stop loss') || q.includes('stop-loss') || q.includes('stoploss')) {
-    return `A <strong>stop-loss</strong> is a preset price where you automatically sell to limit your losses.<br><br>Example: You buy at $100, set stop-loss at $95 (-5%). If the price drops to $95, it sells automatically so you don't lose more.<br><br>Rules:<br>• Always set a stop-loss BEFORE entering a trade<br>• Common levels: 3%, 5%, or 7% below your buy price<br>• Never remove a stop-loss because of hope — discipline saves money`;
+    return `A stop-loss is your safety net. It's a price you set in advance where you say "if it drops to here, sell automatically — no questions asked."<br><br>Example: you buy a stock at $100 and set a stop-loss at $95. If it drops to $95, it sells. You lose $5 instead of potentially $20 or $30 if you held and hoped.<br><br>Most traders use a 3-7% stop-loss. The key rule: <strong>never remove your stop-loss</strong>. I know it's tempting when you "believe" it'll come back — but discipline is what separates people who make money from people who don't.<br><br>Do you want me to explain it easier?`;
   }
 
   // Risk management
   if (q.includes('risk') || q.includes('how much') || q.includes('diversif')) {
-    return `<strong>Risk management</strong> is the #1 thing that separates winners from losers in trading:<br><br>• Never risk more than <strong>2-5%</strong> of your total cash on one trade<br>• Always use a <strong>stop-loss</strong><br>• <strong>Diversify</strong> — spread across stocks, gold, oil, crypto<br>• Never invest money you can't afford to lose<br>• Don't chase losses with bigger bets<br><br>The goal isn't to win every trade — it's to make sure your winners are bigger than your losers.`;
+    return `This is honestly the most important thing in trading — more important than knowing when to buy or sell.<br><br>Here's the deal:<br>• Never put more than 5% of your total money into one single trade<br>• Always use a stop-loss — always, no exceptions<br>• Spread your money across different things (stocks, gold, crypto, oil)<br>• Only trade with money you can literally afford to lose<br>• If you lose 3 trades in a row, take a break — don't chase losses<br><br>The goal isn't to win every trade. It's to make your winners bigger than your losers over time. That's it.<br><br>Do you want me to explain it easier?`;
   }
 
   // What is MarketNest
   if (q.includes('marketnest') || q.includes('this app') || q.includes('this site')) {
-    return `<strong>MarketNest</strong> is a paper trading platform where you practice buying and selling stocks, gold, oil, and crypto with <strong>$10,000 in fake money</strong>.<br><br>Use it to learn timing, signals, and strategy without risking real cash. Once you're profitable here, you can apply those skills to real trading apps like Robinhood or Coinbase.`;
+    return `MarketNest is basically your training ground. You get $10,000 in fake money and real market prices — practice buying and selling without any real risk.<br><br>The idea is: learn here first, then when you're consistently profitable with fake money, go do it for real on apps like Robinhood or Coinbase.<br><br>Think of it like a flight simulator before flying a real plane. Same skills, zero risk.<br><br>Anything specific you wanna know about how to use it?`;
   }
 
   // Beginner / how to start
   if (q.includes('beginner') || q.includes('start') || q.includes('new to') || q.includes('learn')) {
-    return `Welcome! Here's how to get started:<br><br>1. <strong>Learn the basics</strong> — check the Learn section on this site<br>2. <strong>Understand RSI and SMA</strong> — these are your main signals<br>3. <strong>Start with stocks</strong> — less volatile, easier to learn<br>4. <strong>Paper trade first</strong> — practice with fake money until profitable<br>5. <strong>Never skip risk management</strong> — use stop-losses always<br><br>Ask me anything specific and I'll explain it in detail!`;
+    return `Welcome to the game! Here's what I'd do if I was starting fresh:<br><br>1. First just learn what RSI and SMA mean — ask me about either one<br>2. Start by paper trading only stocks (they're less crazy than crypto)<br>3. Make small trades — don't bet it all on one thing<br>4. Always set a stop-loss so you limit how much you can lose<br>5. Track your trades and see what works<br><br>Don't rush. The people who lose money are the ones who jump in without learning first. You're already ahead by being here.<br><br>What do you wanna learn about first?`;
   }
 
   // P&L / profit and loss
   if (q.includes('p&l') || q.includes('profit') || q.includes('loss') || q.includes('p and l')) {
-    return `<strong>P&L (Profit and Loss)</strong> shows how much money you've made or lost.<br><br>• <strong>+$50</strong> means you gained $50 on that position<br>• <strong>-$20</strong> means you lost $20<br><br>Calculate it: (Current Price - Buy Price) × Number of Shares<br><br>In MarketNest, check your Portfolio section to see P&L on each position and your overall performance.`;
+    return `P&L just means Profit and Loss — it's how much money you made or lost on a trade.<br><br>Simple math: (Price now - Price you bought at) × How many shares you own<br><br>If it's positive (green +) you're making money. If it's negative (red -) you're losing. Check your Portfolio tab here to see your P&L on each position.<br><br>The goal is for your total P&L to be green at the end of the week. Some individual trades will be red — that's normal. Just make sure the green ones are bigger.<br><br>Do you want me to explain it easier?`;
   }
 
   // ETF
   if (q.includes('etf')) {
-    return `An <strong>ETF (Exchange-Traded Fund)</strong> is a basket of stocks bundled into one ticker.<br><br>Examples:<br>• <strong>SPY</strong> = top 500 US companies<br>• <strong>GLD</strong> = gold price<br>• <strong>XLE</strong> = energy/oil companies<br>• <strong>USO</strong> = oil price<br><br>ETFs are great for beginners because they give you diversification in one trade — less risk than buying a single stock.`;
+    return `An ETF is basically a bundle of stocks wrapped into one thing you can buy.<br><br>Like <strong>SPY</strong> — instead of buying 500 individual companies, you buy ONE share of SPY and you instantly own a tiny piece of all 500. Instant diversification.<br><br>Some popular ones:<br>• <strong>SPY</strong> = top 500 US companies<br>• <strong>GLD</strong> = tracks gold price<br>• <strong>XLE</strong> = energy/oil companies<br>• <strong>USO</strong> = oil price directly<br><br>ETFs are great for beginners because one trade gives you exposure to a whole sector. Less risk than betting on a single stock.<br><br>Do you want me to explain it easier?`;
+  }
+
+  // Easier explanation request
+  if (q.includes('easier') || q.includes('simpler') || q.includes('dumb it down') || q.includes("don't understand") || q.includes('confused')) {
+    return `No worries at all! Tell me which topic you want me to break down simpler — RSI, SMA, when to buy, when to sell, stop-loss, or something else? I'll explain it like I'm talking to a friend with zero trading experience.`;
+  }
+
+  // Thanks / greeting
+  if (q.includes('thank') || q.includes('thanks') || q.includes('thx')) {
+    return `Anytime! That's what I'm here for. If anything else comes up while you're trading, just ask. Good luck out there 💪`;
+  }
+  if (q.includes('hey') || q.includes('hi') || q.includes('hello') || q.includes('sup') || q.includes('yo')) {
+    return `Hey! What's up? Ask me anything about stocks, crypto, gold, oil, signals, or trading strategy. I'm here to help you make smarter moves.`;
   }
 
   // Default / catch-all
-  return `Good question! Here's what I can help you with:<br><br>• <strong>"What is RSI?"</strong> — Learn about signals<br>• <strong>"When should I buy?"</strong> — Entry timing<br>• <strong>"When should I sell?"</strong> — Exit strategies<br>• <strong>"What is a stop-loss?"</strong> — Risk management<br>• <strong>"Tell me about oil"</strong> — Oil trading<br>• <strong>"Tell me about crypto"</strong> — Crypto basics<br>• <strong>"What is an ETF?"</strong> — Fund investing<br>• <strong>"I'm a beginner"</strong> — Getting started guide<br><br>Ask me anything about stocks, trading, or market terms!`;
+  return `Hmm I'm not 100% sure what you mean, but here's what I can help with:<br><br>• "What is RSI?" — understand buy/sell signals<br>• "When should I buy?" — entry timing<br>• "When should I sell?" — taking profits<br>• "What is a stop-loss?" — protecting your money<br>• "Tell me about oil" or "crypto" or "gold"<br>• "What is an ETF?"<br>• "I'm new to this"<br><br>Just ask me in plain English and I'll break it down for you. No question is too basic.`;
 }
