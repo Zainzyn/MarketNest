@@ -99,9 +99,10 @@
     </div>
     <div class="nav-links">
       <a href="#trade" class="nav-link">Market</a>
+      <a href="#quick-scan" class="nav-link">Quick Scan</a>
       <a href="#portfolio" class="nav-link">Portfolio</a>
       <a href="#learn" class="nav-link">Learn</a>
-      <a href="#earnings-calendar" class="nav-link">Earnings Calendar</a>
+      <a href="#earnings-calendar" class="nav-link">Calendar</a>
       <a href="#pricing" class="nav-link">Pricing</a>
     </div>
     <div class="nav-right">
@@ -123,6 +124,49 @@
       </div>
     </div>
   </nav>
+
+  <!-- PULSE BAR -->
+  <div class="pulse-bar" id="pulse-bar">
+    <div class="pb-item"><span class="pb-label">S&P 500</span><span class="pb-val" id="pb-sp500">—</span></div>
+    <div class="pb-divider"></div>
+    <div class="pb-item"><span class="pb-label">NASDAQ</span><span class="pb-val" id="pb-nasdaq">—</span></div>
+    <div class="pb-divider"></div>
+    <div class="pb-item"><span class="pb-label">BTC</span><span class="pb-val" id="pb-btc">—</span></div>
+    <div class="pb-divider"></div>
+    <div class="pb-item"><span class="pb-label">Gold</span><span class="pb-val" id="pb-gold">—</span></div>
+    <div class="pb-divider"></div>
+    <div class="pb-item"><span class="pb-label">Oil</span><span class="pb-val" id="pb-oil">—</span></div>
+    <div class="pb-divider"></div>
+    <div class="pb-item"><span class="pb-label">Mood</span><span class="pb-val pb-mood" id="pb-mood">62 · Greed</span></div>
+  </div>
+
+  <!-- PERSONAL GREETING -->
+  <div class="greeting-bar" id="greeting-bar">
+    <div class="gb-left">
+      <h2 class="gb-hello" id="gb-hello">What's up 👋</h2>
+      <p class="gb-sub" id="gb-sub">Markets are closed today (Sunday). Crypto is still trading 24/7.</p>
+    </div>
+    <div class="gb-right">
+      <div class="gb-pnl-card glass-card">
+        <div class="gb-pnl-label">Your P&L Today</div>
+        <div class="gb-pnl-val" id="gb-pnl">$0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKET FLASH (3 bullets) -->
+  <div class="market-flash glass-card" id="market-flash">
+    <div class="mf-header">
+      <span class="mf-icon">⚡</span>
+      <span class="mf-title">Market Flash</span>
+      <span class="mf-time" id="mf-time">Updated just now</span>
+    </div>
+    <ul class="mf-bullets">
+      <li>S&P 500 dropped 2.25% this week as Iran tensions rattle markets. Monday could open volatile.</li>
+      <li>Bitcoin holding above $61K despite selloff — crypto showing relative strength vs equities.</li>
+      <li>Oil steady near $72 as OPEC signals no production increase until August.</li>
+    </ul>
+  </div>
 
   <!-- HERO -->
   <section class="hero-section">
@@ -425,6 +469,78 @@
     </div>
   </section>
 
+  <!-- QUICK SCAN -->
+  <section class="section" id="quick-scan">
+    <div class="section-header">
+      <h2 class="section-title">🔍 Quick Scan</h2>
+      <p class="section-sub">Type any ticker and get an instant signal breakdown</p>
+    </div>
+    <div class="qs-card glass-card">
+      <div class="qs-input-row">
+        <input type="text" id="qs-input" placeholder="Enter a ticker (e.g. AAPL, TSLA, BTC-USD)" onkeydown="if(event.key==='Enter')runQuickScan()"/>
+        <button class="btn-primary" onclick="runQuickScan()">Scan →</button>
+      </div>
+      <div class="qs-result hidden" id="qs-result">
+        <div class="qs-header">
+          <div class="qs-sym" id="qs-sym">—</div>
+          <div class="qs-price" id="qs-price">—</div>
+        </div>
+        <div class="qs-indicators">
+          <div class="qs-ind"><div class="qs-ind-label">Signal</div><div class="qs-ind-val" id="qs-signal">—</div></div>
+          <div class="qs-ind"><div class="qs-ind-label">RSI</div><div class="qs-ind-val" id="qs-rsi">—</div></div>
+          <div class="qs-ind"><div class="qs-ind-label">SMA10</div><div class="qs-ind-val" id="qs-sma10">—</div></div>
+          <div class="qs-ind"><div class="qs-ind-label">SMA30</div><div class="qs-ind-val" id="qs-sma30">—</div></div>
+        </div>
+        <div class="qs-reason" id="qs-reason">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INCOME TRACKER (Dividends) -->
+  <section class="section" id="income-tracker">
+    <div class="section-header">
+      <h2 class="section-title">💸 Income Tracker</h2>
+      <p class="section-sub">Upcoming dividends from popular stocks</p>
+    </div>
+    <div class="income-grid">
+      <div class="income-card glass-card">
+        <div class="ic-sym">AAPL</div>
+        <div class="ic-name">Apple Inc.</div>
+        <div class="ic-div">$0.25/share</div>
+        <div class="ic-date">Ex-Date: Jun 13, 2026</div>
+        <div class="ic-yield">Yield: 0.52%</div>
+      </div>
+      <div class="income-card glass-card">
+        <div class="ic-sym">MSFT</div>
+        <div class="ic-name">Microsoft Corp.</div>
+        <div class="ic-div">$0.83/share</div>
+        <div class="ic-date">Ex-Date: Jun 19, 2026</div>
+        <div class="ic-yield">Yield: 0.72%</div>
+      </div>
+      <div class="income-card glass-card">
+        <div class="ic-sym">XOM</div>
+        <div class="ic-name">Exxon Mobil</div>
+        <div class="ic-div">$0.99/share</div>
+        <div class="ic-date">Ex-Date: Jun 11, 2026</div>
+        <div class="ic-yield">Yield: 3.4%</div>
+      </div>
+      <div class="income-card glass-card">
+        <div class="ic-sym">SPY</div>
+        <div class="ic-name">S&P 500 ETF</div>
+        <div class="ic-div">$1.78/share</div>
+        <div class="ic-date">Ex-Date: Jun 20, 2026</div>
+        <div class="ic-yield">Yield: 1.3%</div>
+      </div>
+      <div class="income-card glass-card">
+        <div class="ic-sym">CVX</div>
+        <div class="ic-name">Chevron Corp.</div>
+        <div class="ic-div">$1.63/share</div>
+        <div class="ic-date">Ex-Date: Jun 17, 2026</div>
+        <div class="ic-yield">Yield: 4.1%</div>
+      </div>
+    </div>
+  </section>
+
   <!-- LEARN -->
   <section class="section" id="learn">
     <div class="section-header">
@@ -481,7 +597,7 @@
           <li class="feat-yes">Basic Portfolio Tracking</li>
           <li class="feat-yes">Earnings Calendar (stocks only)</li>
           <li class="feat-yes">Trading Education Hub</li>
-          <li class="feat-no">Zain AI Advisor (PRO only)</li>
+          <li class="feat-no">Zain AI Advisor (3 free chats/day, PRO unlimited)</li>
           <li class="feat-no">Gold, Oil &amp; Crypto Markets</li>
           <li class="feat-no">SMA 10 &amp; 30 Signals</li>
           <li class="feat-no">Economic Calendar</li>
@@ -506,7 +622,7 @@
         <div class="pc-price gold">$6.99<span class="pc-period">/month</span></div>
         <ul class="pc-features">
           <li class="feat-yes">Everything in Free</li>
-          <li class="feat-yes">🤖 Zain AI Advisor — ask anything about stocks</li>
+          <li class="feat-yes">🤖 Zain AI Advisor — UNLIMITED (no daily cap)</li>
           <li class="feat-yes">Gold, Oil &amp; Crypto Markets (20+ tickers)</li>
           <li class="feat-yes">SMA 10 &amp; 30 Signals Unlocked</li>
           <li class="feat-yes">Full Economic Calendar</li>
@@ -549,10 +665,10 @@
       </div>
       <div class="zp-right">
         <div class="zp-pro-lock">
-          <span class="zp-lock-icon">🔒</span>
-          <strong>PRO Feature</strong>
-          <p>Unlock Zain AI with MarketNest Pro for just <strong>$6.99/mo</strong></p>
-          <button class="btn-gold" onclick="openUpgradeModal()">Unlock Zain AI →</button>
+          <span class="zp-lock-icon">💬</span>
+          <strong>3 free chats/day</strong>
+          <p>Upgrade to PRO for <strong>unlimited</strong> Zain AI — just <strong>$6.99/mo</strong></p>
+          <button class="btn-gold" onclick="openUpgradeModal()">Unlock Unlimited →</button>
         </div>
       </div>
     </div>
@@ -600,7 +716,7 @@
   <div class="zain-messages" id="zain-messages">
     <div class="zain-msg bot">
       <span class="zain-msg-avatar">🤖</span>
-      <div class="zain-msg-bubble">Hey! I'm <strong>Zain</strong>, your AI stock advisor. Ask me anything about stocks, crypto, gold, oil, trading strategies, or market terms. I'm here to help you learn!</div>
+      <div class="zain-msg-bubble">Hey! I'm <strong>Zain</strong>, your AI stock advisor. Ask me anything about stocks, crypto, gold, oil, trading strategies, or market terms. I'm here to help you learn!<br><br><em style="font-size:12px;color:#9ca3af;">Free users: 3 messages per day · PRO: unlimited</em></div>
     </div>
   </div>
   <div class="zain-input-row">

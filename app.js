@@ -870,19 +870,61 @@ document.addEventListener('click', function(e) {
 // ═══════════════════════════════════════════════════════════════
 
 function toggleZainChat() {
-  // Block free users from using Zain
-  if (!isPro()) {
-    openUpgradeModal();
-    return;
-  }
   const box = document.getElementById('zain-chatbox');
   box.classList.toggle('hidden');
+}
+
+const ZAIN_FREE_LIMIT = 3; // Free users get 3 messages per day
+
+function getZainUsage() {
+  const key = `mn_zain_usage_${currentUser ? currentUser.name : 'guest'}`;
+  try {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    const today = new Date().toDateString();
+    if (data.date !== today) return { date: today, count: 0 };
+    return data;
+  } catch(e) { return { date: new Date().toDateString(), count: 0 }; }
+}
+
+function saveZainUsage(usage) {
+  const key = `mn_zain_usage_${currentUser ? currentUser.name : 'guest'}`;
+  localStorage.setItem(key, JSON.stringify(usage));
 }
 
 function sendZainMsg() {
   const input = document.getElementById('zain-input');
   const text  = input.value.trim();
   if (!text) return;
+
+  // Check daily limit for free users
+  if (!isPro()) {
+    const usage = getZainUsage();
+    if (usage.count >= ZAIN_FREE_LIMIT) {
+      const container = document.getElementById('zain-messages');
+      container.innerHTML += `<div class="zain-msg bot">
+        <span class="zain-msg-avatar">🤖</span>
+        <div class="zain-msg-bubble">Hey! You've used your <strong>3 free messages</strong> for today. Upgrade to <strong>PRO</strong> for unlimited Zain AI access — just $6.99/mo, cancel anytime.<br><br><a href="#pricing" onclick="toggleZainChat()" style="color:var(--gold);font-weight:700;text-decoration:none;">Upgrade to PRO →</a></div>
+      </div>`;
+      container.scrollTop = container.scrollHeight;
+      input.value = '';
+      return;
+    }
+    usage.count++;
+    saveZainUsage(usage);
+    // Show remaining messages
+    const remaining = ZAIN_FREE_LIMIT - usage.count;
+    setTimeout(() => {
+      const container = document.getElementById('zain-messages');
+      if (remaining > 0) {
+        container.innerHTML += `<div class="zain-msg bot" style="opacity:0.6">
+          <span class="zain-msg-avatar">💬</span>
+          <div class="zain-msg-bubble" style="font-size:12px;padding:8px 12px;">${remaining} free message${remaining===1?'':'s'} remaining today. <a href="#pricing" onclick="toggleZainChat()" style="color:var(--gold);text-decoration:none;">Upgrade for unlimited →</a></div>
+        </div>`;
+      }
+      container.scrollTop = container.scrollHeight;
+    }, 3000);
+  }
+
   input.value = '';
 
   const container = document.getElementById('zain-messages');
@@ -1122,3 +1164,94 @@ function zainThink(q) {
 
   return `I'm not totally sure what you're asking but no worries — I'm here to help. Try asking me something like:<br><br>• "What is RSI?"<br>• "When should I buy?"<br>• "When should I sell?"<br>• "What is a stop-loss?"<br>• "Tell me about crypto" or "oil" or "gold"<br>• "I'm new to this"<br><br>You can type however you want — I'll figure it out. And if I don't get it, just rephrase and I'll try again. No judgment here.`;
 }
+
+
+// ═══════════════════════════════════════════════════════════════
+// PULSE BAR + GREETING + QUICK SCAN
+// ═══════════════════════════════════════════════════════════════
+
+async function loadPulseBar() {
+  const tickers = [
+    { sym: '^GSPC', el: 'pb-sp500' },
+    { sym: '^IXIC', el: 'pb-nasdaq' },
+    { sym: 'BTC-USD', el: 'pb-btc' },
+    { sym: 'GLD', el: 'pb-gold' },
+    { sym: 'USO', el: 'pb-oil' },
+  ];
+  for (const t of tickers) {
+    const data = await fetchPrice(t.sym);
+    const el = document.getElementById(t.el);
+    if (data && el) {
+      const up = parseFloat(data.change) >= 0;
+      el.textContent = `${up?'▲':'▼'} ${Math.abs(data.change)}%`;
+      el.className = `pb-val ${up?'up':'down'}`;
+    }
+  }
+}
+
+function loadGreeting() {
+  if (!currentUser) return;
+  const hour = new Date().getHours();
+  let greet = 'What\'s up';
+  if (hour < 12) greet = 'Good morning';
+  else if (hour < 17) greet = 'Good afternoon';
+  else greet = 'Good evening';
+
+  const el = document.getElementById('gb-hello');
+  if (el) el.textContent = `${greet}, ${currentUser.name} 👋`;
+
+  // Market status
+  const day = new Date().getDay();
+  const subEl = document.getElementById('gb-sub');
+  if (day === 0 || day === 6) {
+    subEl.textContent = 'Markets are closed this weekend. Crypto is still trading 24/7.';
+  } else if (hour < 9 || (hour === 9 && new Date().getMinutes() < 30)) {
+    subEl.textContent = 'Pre-market. US stocks open at 9:30 AM ET.';
+  } else if (hour >= 16) {
+    subEl.textContent = 'After hours. US market is closed. Crypto still active.';
+  } else {
+    subEl.textContent = 'Markets are OPEN. Good time to trade.';
+  }
+}
+
+async function runQuickScan() {
+  const input = document.getElementById('qs-input');
+  const ticker = input.value.trim().toUpperCase();
+  if (!ticker) return;
+
+  const result = document.getElementById('qs-result');
+  result.classList.add('hidden');
+
+  const data = await fetchPrice(ticker);
+  if (!data) {
+    alert('Could not fetch data for that ticker. Check the symbol and try again.');
+    return;
+  }
+
+  const sig = getSignal(data.history);
+
+  document.getElementById('qs-sym').textContent = ticker;
+  document.getElementById('qs-price').textContent = `$${data.price.toFixed(2)}`;
+
+  const sigEl = document.getElementById('qs-signal');
+  sigEl.textContent = sig.signal;
+  sigEl.style.color = sig.signal === 'BUY' ? 'var(--green)' : sig.signal === 'SELL' ? 'var(--red)' : 'var(--gold)';
+
+  const rsiEl = document.getElementById('qs-rsi');
+  rsiEl.textContent = sig.rsi ? sig.rsi.toFixed(1) : '—';
+  rsiEl.style.color = sig.rsi < 30 ? 'var(--green)' : sig.rsi > 70 ? 'var(--red)' : 'var(--text)';
+
+  document.getElementById('qs-sma10').textContent = sig.sma10 ? `$${sig.sma10.toFixed(2)}` : '—';
+  document.getElementById('qs-sma30').textContent = sig.sma30 ? `$${sig.sma30.toFixed(2)}` : '—';
+  document.getElementById('qs-reason').textContent = sig.reason;
+
+  result.classList.remove('hidden');
+}
+
+// Patch the launchApp to also load new features
+const _originalLaunchApp = launchApp;
+launchApp = function(user) {
+  _originalLaunchApp(user);
+  loadGreeting();
+  loadPulseBar();
+};

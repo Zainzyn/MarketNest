@@ -1054,3 +1054,94 @@ body {
 .zp-lock-icon { font-size: 32px; }
 .zp-pro-lock strong { font-size: 16px; color: var(--gold); }
 .zp-pro-lock p { font-size: 13px; color: var(--text-mid); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   PULSE BAR
+══════════════════════════════════════════════════════════════ */
+.pulse-bar {
+  display: flex; align-items: center; gap: 0;
+  padding: 10px 40px; background: rgba(13,18,32,0.95);
+  border-bottom: 1px solid var(--glass-b); flex-wrap: wrap;
+  overflow: hidden;
+}
+.pb-item { display: flex; align-items: center; gap: 8px; padding: 4px 16px; }
+.pb-label { font-size: 11px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.pb-val { font-size: 13px; font-weight: 700; color: var(--text); }
+.pb-val.up { color: var(--green); }
+.pb-val.down { color: var(--red); }
+.pb-mood { color: var(--gold); }
+.pb-divider { width: 1px; height: 20px; background: var(--glass-b); }
+
+/* ══════════════════════════════════════════════════════════════
+   GREETING BAR
+══════════════════════════════════════════════════════════════ */
+.greeting-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 40px 16px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; gap: 16px;
+}
+.gb-hello { font-size: 26px; font-weight: 800; }
+.gb-sub { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+.gb-pnl-card { padding: 14px 22px; text-align: center; }
+.gb-pnl-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.gb-pnl-val { font-size: 22px; font-weight: 800; color: var(--green); }
+
+/* ══════════════════════════════════════════════════════════════
+   MARKET FLASH
+══════════════════════════════════════════════════════════════ */
+.market-flash {
+  max-width: 1200px; margin: 0 auto 8px; padding: 22px 28px;
+  border: 1px solid rgba(245,166,35,0.15);
+}
+.mf-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.mf-icon { font-size: 18px; }
+.mf-title { font-size: 15px; font-weight: 700; color: var(--gold); }
+.mf-time { font-size: 11px; color: var(--text-dim); margin-left: auto; }
+.mf-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.mf-bullets li {
+  font-size: 14px; color: var(--text-mid); line-height: 1.5;
+  padding-left: 16px; position: relative;
+}
+.mf-bullets li::before {
+  content: '•'; position: absolute; left: 0; color: var(--gold); font-weight: 700;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUICK SCAN
+══════════════════════════════════════════════════════════════ */
+.qs-card { padding: 28px; }
+.qs-input-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.qs-input-row input {
+  flex: 1; min-width: 200px; padding: 13px 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--glass-b);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 15px;
+  font-family: 'Outfit', sans-serif; outline: none; transition: var(--t);
+}
+.qs-input-row input:focus { border-color: var(--green); }
+.qs-input-row input::placeholder { color: var(--text-dim); }
+.qs-result { animation: slideDown 0.3s ease; }
+.qs-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; }
+.qs-sym { font-size: 28px; font-weight: 900; }
+.qs-price { font-size: 22px; font-weight: 700; color: var(--green); }
+.qs-indicators { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+.qs-ind {
+  padding: 14px; background: rgba(255,255,255,0.03);
+  border: 1px solid var(--glass-b); border-radius: var(--radius-sm); text-align: center;
+}
+.qs-ind-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; }
+.qs-ind-val { font-size: 18px; font-weight: 800; }
+.qs-reason { font-size: 14px; color: var(--text-mid); line-height: 1.5; padding: 14px; background: rgba(0,212,161,0.05); border-radius: var(--radius-sm); border: 1px solid rgba(0,212,161,0.12); }
+
+/* ══════════════════════════════════════════════════════════════
+   INCOME TRACKER
+══════════════════════════════════════════════════════════════ */
+.income-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px;
+}
+.income-card { padding: 22px; border: 1px solid var(--glass-b); transition: var(--t); }
+.income-card:hover { border-color: var(--green); transform: translateY(-3px); }
+.ic-sym { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.ic-name { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+.ic-div { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+.ic-date { font-size: 12px; color: var(--text-mid); margin-bottom: 4px; }
+.ic-yield { font-size: 12px; color: var(--gold); font-weight: 600; }
