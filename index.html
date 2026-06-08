@@ -330,7 +330,7 @@
       </div>
       <div class="pro-feat-card glass-card shimmer-card">
         <div class="pfc-icon">🤖</div>
-        <div class="pfc-title">Zain AI Advisor</div>
+        <div class="pfc-title">Finch AI Advisor</div>
         <div class="pfc-desc">Your personal AI stock advisor. Ask any question about trading and get instant answers 24/7.</div>
         <div class="pro-pill">PRO</div>
       </div>
@@ -597,7 +597,7 @@
           <li class="feat-yes">Basic Portfolio Tracking</li>
           <li class="feat-yes">Earnings Calendar (stocks only)</li>
           <li class="feat-yes">Trading Education Hub</li>
-          <li class="feat-no">Zain AI Advisor (3 free chats/day, PRO unlimited)</li>
+          <li class="feat-no">Finch AI Advisor (3 free chats/day, PRO unlimited)</li>
           <li class="feat-no">Gold, Oil &amp; Crypto Markets</li>
           <li class="feat-no">SMA 10 &amp; 30 Signals</li>
           <li class="feat-no">Economic Calendar</li>
@@ -622,7 +622,7 @@
         <div class="pc-price gold">$6.99<span class="pc-period">/month</span></div>
         <ul class="pc-features">
           <li class="feat-yes">Everything in Free</li>
-          <li class="feat-yes">🤖 Zain AI Advisor — UNLIMITED (no daily cap)</li>
+          <li class="feat-yes">🤖 Finch AI Advisor — UNLIMITED (no daily cap)</li>
           <li class="feat-yes">Gold, Oil &amp; Crypto Markets (20+ tickers)</li>
           <li class="feat-yes">SMA 10 &amp; 30 Signals Unlocked</li>
           <li class="feat-yes">Full Economic Calendar</li>
@@ -647,14 +647,14 @@
     </div>
   </section>
 
-  <!-- ZAIN AI PROMO SECTION -->
-  <section class="zain-promo-section">
-    <div class="zain-promo glass-card">
+  <!-- Finch AI PROMO SECTION -->
+  <section class="finch-promo-section">
+    <div class="finch-promo glass-card">
       <div class="zp-left">
         <div class="zp-avatar">🤖</div>
         <div class="zp-info">
-          <h3>Meet Zain — Your AI Stock Advisor</h3>
-          <p>Got questions about the market? Zain answers instantly. Ask about RSI, when to buy/sell, stop-losses, crypto, gold, oil — anything. It's like having a personal trading mentor available 24/7.</p>
+          <h3>Meet Finch — Your AI Stock Advisor</h3>
+          <p>Got questions about the market? Finch answers instantly. Ask about RSI, when to buy/sell, stop-losses, crypto, gold, oil — anything. It's like having a personal trading mentor available 24/7.</p>
           <div class="zp-examples">
             <span class="zp-chip">"What is RSI?"</span>
             <span class="zp-chip">"When should I sell?"</span>
@@ -667,7 +667,7 @@
         <div class="zp-pro-lock">
           <span class="zp-lock-icon">💬</span>
           <strong>3 free chats/day</strong>
-          <p>Upgrade to PRO for <strong>unlimited</strong> Zain AI — just <strong>$6.99/mo</strong></p>
+          <p>Upgrade to PRO for <strong>unlimited</strong> Finch AI — just <strong>$6.99/mo</strong></p>
           <button class="btn-gold" onclick="openUpgradeModal()">Unlock Unlimited →</button>
         </div>
       </div>
@@ -697,31 +697,31 @@
 
 </div><!-- /main-app -->
 
-<!-- ZAIN AI CHATBOT -->
-<div class="zain-chat-btn" id="zain-btn" onclick="toggleZainChat()">
-  <span class="zain-btn-icon">🤖</span>
-  <span class="zain-btn-label">Ask Zain</span>
+<!-- Finch AI CHATBOT -->
+<div class="finch-chat-btn" id="finch-btn" onclick="toggleFinchChat()">
+  <span class="finch-btn-icon">🤖</span>
+  <span class="finch-btn-label">Ask Finch</span>
 </div>
-<div class="zain-chatbox glass-card hidden" id="zain-chatbox">
-  <div class="zain-header">
-    <div class="zain-header-left">
-      <span class="zain-avatar">🤖</span>
+<div class="finch-chatbox glass-card hidden" id="finch-chatbox">
+  <div class="finch-header">
+    <div class="finch-header-left">
+      <span class="finch-avatar">🤖</span>
       <div>
-        <div class="zain-name">Zain</div>
-        <div class="zain-status">AI Stock Advisor • Online</div>
+        <div class="finch-name">Finch</div>
+        <div class="finch-status">AI Stock Advisor • Online</div>
       </div>
     </div>
-    <button class="zain-close" onclick="toggleZainChat()">✕</button>
+    <button class="finch-close" onclick="toggleFinchChat()">✕</button>
   </div>
-  <div class="zain-messages" id="zain-messages">
-    <div class="zain-msg bot">
-      <span class="zain-msg-avatar">🤖</span>
-      <div class="zain-msg-bubble">Hey! I'm <strong>Zain</strong>, your AI stock advisor. Ask me anything about stocks, crypto, gold, oil, trading strategies, or market terms. I'm here to help you learn!<br><br><em style="font-size:12px;color:#9ca3af;">Free users: 3 messages per day · PRO: unlimited</em></div>
+  <div class="finch-messages" id="finch-messages">
+    <div class="finch-msg bot">
+      <span class="finch-msg-avatar">🤖</span>
+      <div class="finch-msg-bubble">Hey! I'm <strong>Finch</strong>, your AI stock advisor. Ask me anything about stocks, crypto, gold, oil, trading strategies, or market terms. I'm here to help you learn!<br><br><em style="font-size:12px;color:#9ca3af;">Free users: 3 messages per day · PRO: unlimited</em></div>
     </div>
   </div>
-  <div class="zain-input-row">
-    <input type="text" id="zain-input" placeholder="Ask me about stocks, crypto, signals..." onkeydown="if(event.key==='Enter')sendZainMsg()"/>
-    <button class="zain-send-btn" onclick="sendZainMsg()">→</button>
+  <div class="finch-input-row">
+    <input type="text" id="finch-input" placeholder="Ask me about stocks, crypto, signals..." onkeydown="if(event.key==='Enter')sendFinchMsg()"/>
+    <button class="finch-send-btn" onclick="sendFinchMsg()">→</button>
   </div>
 </div>
 
@@ -735,7 +735,7 @@
       <p class="modal-sub">Unlock everything for just $6.99/month. Cancel anytime.</p>
     </div>
     <div class="modal-features-list">
-      <div class="mfl-item"><span>✓</span> Zain AI Advisor — ask anything about stocks</div>
+      <div class="mfl-item"><span>✓</span> Finch AI Advisor — ask anything about stocks</div>
       <div class="mfl-item"><span>✓</span> Gold, Oil &amp; Crypto Markets</div>
       <div class="mfl-item"><span>✓</span> SMA 10 &amp; 30 Signals</div>
       <div class="mfl-item"><span>✓</span> Full Economic Calendar</div>
