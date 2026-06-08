@@ -1338,3 +1338,4 @@ launchApp = function(user) {
   loadGreeting();
   loadPulseBar();
 };
+
